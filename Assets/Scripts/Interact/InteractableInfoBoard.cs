@@ -17,6 +17,7 @@ public class InteractableInfoBoard : MonoBehaviour, IInteractable
     
     private AudioSource audioSource;
     public bool isOpen = false;
+    public static bool isAnyBoardOpen = false;
     private Coroutine fadeCoroutine;
 
     private void Start()
@@ -46,6 +47,7 @@ public class InteractableInfoBoard : MonoBehaviour, IInteractable
     public void OpenPanel()
     {
         isOpen = true;
+        isAnyBoardOpen = true;
         
         if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
         
@@ -60,6 +62,7 @@ public class InteractableInfoBoard : MonoBehaviour, IInteractable
     public void ClosePanel()
     {
         isOpen = false;
+        isAnyBoardOpen = false;
 
         if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
 

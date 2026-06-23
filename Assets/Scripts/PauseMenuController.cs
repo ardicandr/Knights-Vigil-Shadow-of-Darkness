@@ -17,6 +17,10 @@ public class PauseMenuController : MonoBehaviour
     [Tooltip("SFX saat menu pause ditutup (cth: suara klik batu maut/mekanisme kuno)")]
     [SerializeField] private AudioClip pauseCloseSFX;
 
+    [Header("UI Panels (Settings)")]
+    public GameObject settingsPanel;
+    public CanvasGroup settingsCanvasGroup;
+
     public static bool isPaused = false;
     private PlayerController playerScript;
     private Coroutine pauseCoroutine;
@@ -35,6 +39,12 @@ public class PauseMenuController : MonoBehaviour
             
             if (pauseCanvasGroup != null) pauseCanvasGroup.alpha = 0f;
             pausePanel.SetActive(false);
+        }
+
+        if (settingsPanel != null)
+        {
+            if (settingsCanvasGroup != null) settingsCanvasGroup.alpha = 0f;
+            settingsPanel.SetActive(false);
         }
     }
 
@@ -150,6 +160,65 @@ public class PauseMenuController : MonoBehaviour
         isPaused = false;
         LevelData.NextLevelName = "MainMenu";
         SceneManager.LoadScene("LoadingScene");
+    }
+
+    public void RestartLevel()
+    {
+        Time.timeScale = 1f;
+        isPaused = false;
+        LevelData.NextLevelName = SceneManager.GetActiveScene().name;
+        SceneManager.LoadScene("LoadingScene");
+    }
+
+    private Coroutine settingsCoroutine;
+
+    public void OpenSettings()
+    {
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(true);
+            if (settingsCanvasGroup != null)
+            {
+                if (settingsCoroutine != null) StopCoroutine(settingsCoroutine);
+                settingsCoroutine = StartCoroutine(FadeSettingsPanel(0f, 1f, true));
+            }
+        }
+    }
+
+    public void CloseSettings()
+    {
+        if (settingsPanel != null)
+        {
+            if (settingsCanvasGroup != null)
+            {
+                if (settingsCoroutine != null) StopCoroutine(settingsCoroutine);
+                settingsCoroutine = StartCoroutine(FadeSettingsPanel(1f, 0f, false));
+            }
+            else
+            {
+                settingsPanel.SetActive(false);
+            }
+        }
+    }
+
+    private IEnumerator FadeSettingsPanel(float startAlpha, float endAlpha, bool isOpening)
+    {
+        float elapsedTime = 0f;
+        settingsCanvasGroup.alpha = startAlpha;
+
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.unscaledDeltaTime; 
+            settingsCanvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, elapsedTime / fadeDuration);
+            yield return null;
+        }
+
+        settingsCanvasGroup.alpha = endAlpha;
+
+        if (!isOpening)
+        {
+            settingsPanel.SetActive(false);
+        }
     }
 
     public void QuitGame()

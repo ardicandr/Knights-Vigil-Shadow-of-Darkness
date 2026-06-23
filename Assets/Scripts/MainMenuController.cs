@@ -10,11 +10,16 @@ public class MainMenuController : MonoBehaviour
     [Header("Transition Settings")]
     public CanvasGroup fadeGroup;
     public float fadeDuration = 1f;
+    public float panelFadeDuration = 0.6f;
 
     [Header("UI Panels")]
     public GameObject settingsPanel;
     public GameObject creditsPanel;
     public GameObject quitConfirmPanel;
+
+    private CanvasGroup settingsCG;
+    private CanvasGroup creditsCG;
+    private CanvasGroup quitCG;
 
     void Start()
     {
@@ -24,12 +29,24 @@ public class MainMenuController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Tutup semua panel saat awal
-        if (settingsPanel != null) settingsPanel.SetActive(false);
-        if (creditsPanel != null) creditsPanel.SetActive(false);
-        if (quitConfirmPanel != null) quitConfirmPanel.SetActive(false);
+        if (settingsPanel != null) settingsCG = settingsPanel.GetComponent<CanvasGroup>();
+        if (creditsPanel != null) creditsCG = creditsPanel.GetComponent<CanvasGroup>();
+        if (quitConfirmPanel != null) quitCG = quitConfirmPanel.GetComponent<CanvasGroup>();
+
+        SetupPanelAtStart(settingsPanel, settingsCG);
+        SetupPanelAtStart(creditsPanel, creditsCG);
+        SetupPanelAtStart(quitConfirmPanel, quitCG);
 
         if (fadeGroup != null) StartCoroutine(Fade(0));
+    }
+
+    void SetupPanelAtStart(GameObject panel, CanvasGroup cg)
+    {
+        if (panel != null)
+        {
+            panel.SetActive(false);
+            if (cg != null) cg.alpha = 0;
+        }
     }
 
     public void PlayGame()
@@ -46,25 +63,28 @@ public class MainMenuController : MonoBehaviour
     }
 
     public void OpenSettings() {
-        settingsPanel.SetActive(true);
+        StopAllCoroutines();
+        StartCoroutine(FadePanelIn(settingsPanel, settingsCG));
     }
     public void CloseSettings() {
-        settingsPanel.SetActive(false);
+        StartCoroutine(FadePanelOut(settingsPanel, settingsCG));
     }
 
     public void OpenCredits() {
-        creditsPanel.SetActive(true);
+        StopAllCoroutines();
+        StartCoroutine(FadePanelIn(creditsPanel, creditsCG));
     }
     public void CloseCredits() {
-        creditsPanel.SetActive(false);
+        StartCoroutine(FadePanelOut(creditsPanel, creditsCG));
     }
 
     public void ShowQuitConfirmation() {
-        quitConfirmPanel.SetActive(true);
+        StopAllCoroutines();
+        StartCoroutine(FadePanelIn(quitConfirmPanel, quitCG));
     }
 
     public void HideQuitConfirmation() {
-        quitConfirmPanel.SetActive(false);
+        StartCoroutine(FadePanelOut(quitConfirmPanel, quitCG));
     }
 
     public void FinalQuit() {
@@ -83,5 +103,34 @@ public class MainMenuController : MonoBehaviour
             yield return null;
         }
         fadeGroup.alpha = targetAlpha;
+    }
+
+    IEnumerator FadePanelIn(GameObject panel, CanvasGroup cg)
+    {
+        if (panel == null || cg == null) yield break;
+        panel.SetActive(true);
+        float timer = 0;
+        while (timer < panelFadeDuration)
+        {
+            timer += Time.deltaTime;
+            cg.alpha = Mathf.Lerp(0, 1, timer / panelFadeDuration);
+            yield return null;
+        }
+        cg.alpha = 1;
+    }
+
+    // Coroutine baru untuk menyembunyikan panel
+    IEnumerator FadePanelOut(GameObject panel, CanvasGroup cg)
+    {
+        if (panel == null || cg == null) yield break;
+        float timer = 0;
+        while (timer < panelFadeDuration)
+        {
+            timer += Time.deltaTime;
+            cg.alpha = Mathf.Lerp(1, 0, timer / panelFadeDuration);
+            yield return null;
+        }
+        cg.alpha = 0;
+        panel.SetActive(false);
     }
 }

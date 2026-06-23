@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     public float mouseSensitivity = 2f;
     [Tooltip("Global multiplier untuk input sentuh mobile")]
     public float mobileLookSensitivity = 1f; 
+    public bool invertYAxis = false;
     public float upperLookLimit = -60f;
     public float lowerLookLimit = 60f;
 
@@ -85,6 +86,17 @@ public class PlayerController : MonoBehaviour
 
         originalCamLocalPos = cam.localPosition;
         healthScript = GetComponent<PlayerHealth>();
+
+        // Muat Sensitivitas dari PlayerPrefs jika sudah pernah disimpan
+        if (PlayerPrefs.HasKey("Sensitivity"))
+        {
+            mobileLookSensitivity = PlayerPrefs.GetFloat("Sensitivity");
+        }
+
+        if (PlayerPrefs.HasKey("InvertY"))
+        {
+            invertYAxis = PlayerPrefs.GetInt("InvertY") == 1;
+        }
     }
 
     void Update()
@@ -151,7 +163,8 @@ public class PlayerController : MonoBehaviour
     void HandleLook()
     {
         // Rotasi Vertikal (Kamera)
-        xRotation -= pendingMouseY;
+        float invertMultiplier = invertYAxis ? -1f : 1f;
+        xRotation -= pendingMouseY * invertMultiplier;
         xRotation = Mathf.Clamp(xRotation, upperLookLimit, lowerLookLimit);
 
         if (!isSitting && !isStandingUp)

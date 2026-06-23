@@ -7,6 +7,13 @@ public class PlayerInteraction : MonoBehaviour
     public LayerMask interactLayer;        
     public GameObject interactUI;
 
+    private PlayerController pc;
+
+    void Start()
+    {
+        pc = GetComponentInParent<PlayerController>();
+    }
+
     void Update()
     {
         CheckForInteractable();
@@ -14,14 +21,11 @@ public class PlayerInteraction : MonoBehaviour
 
     void CheckForInteractable()
     {
-        PlayerController pc = GetComponentInParent<PlayerController>();
- 
         bool isBusyInteracting = false;
         
         if (pc != null && pc.isSitting) isBusyInteracting = true;
 
-        InteractableInfoBoard currentBoard = FindObjectOfType<InteractableInfoBoard>();
-        if (currentBoard != null && currentBoard.isOpen) isBusyInteracting = true;
+        if (InteractableInfoBoard.isAnyBoardOpen) isBusyInteracting = true;
 
         if (isBusyInteracting)
         {

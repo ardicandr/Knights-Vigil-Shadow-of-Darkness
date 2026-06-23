@@ -11,13 +11,16 @@ public class WeaponSystem : MonoBehaviour {
 
     private List<GameObject> hitTargets = new List<GameObject>();
     private Dictionary<Transform, Vector3> lastPointPositions = new Dictionary<Transform, Vector3>();
+    private bool wasAttacking = false;
 
     void Update() {
         if (isAttacking) {
             CalculateSweep();
-        } else {
+            wasAttacking = true;
+        } else if (wasAttacking) {
             lastPointPositions.Clear();
             hitTargets.Clear();
+            wasAttacking = false;
         }
     }
 

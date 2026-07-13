@@ -43,6 +43,13 @@ public class MobileInputManager : MonoBehaviour
             return;
         }
 
+        // Jika tutorial aktif, paksa reset semua input setiap frame
+        if (TutorialManager.isTutorialActive)
+        {
+            ResetAllInputs();
+            return;
+        }
+
         jumpPressed = false;
         interactPressed = false;
         attack1Pressed = false;
@@ -53,7 +60,7 @@ public class MobileInputManager : MonoBehaviour
         lookInput = Vector2.zero;
     }
 
-    private void ResetAllInputs()
+    public void ResetAllInputs()
     {
         moveInput = Vector2.zero;
         lookInput = Vector2.zero;
@@ -68,17 +75,54 @@ public class MobileInputManager : MonoBehaviour
     }
 
     // --- METHODS UNTUK TOMBOL UI ---
-    public void OnJumpPressed()     => jumpPressed = true;
-    public void OnInteractPressed() => interactPressed = true;
-    public void OnAttack1Pressed()  => attack1Pressed = true;
-    public void OnAttack2Pressed()  => attack2Pressed = true;
-    public void OnAttack3Pressed()  => attack3Pressed = true;
-    public void OnKickPressed()     => kickPressed = true;
+    // Semua method ini sekarang cek isTutorialActive agar sentuhan dari
+    // tombol Start tidak bocor ke kontrol game
+
+    public void OnJumpPressed()
+    {
+        if (TutorialManager.isTutorialActive) return;
+        jumpPressed = true;
+    }
+
+    public void OnInteractPressed()
+    {
+        if (TutorialManager.isTutorialActive) return;
+        interactPressed = true;
+    }
+
+    public void OnAttack1Pressed()
+    {
+        if (TutorialManager.isTutorialActive) return;
+        attack1Pressed = true;
+    }
+
+    public void OnAttack2Pressed()
+    {
+        if (TutorialManager.isTutorialActive) return;
+        attack2Pressed = true;
+    }
+
+    public void OnAttack3Pressed()
+    {
+        if (TutorialManager.isTutorialActive) return;
+        attack3Pressed = true;
+    }
+
+    public void OnKickPressed()
+    {
+        if (TutorialManager.isTutorialActive) return;
+        kickPressed = true;
+    }
     
-    public void SetBlockHeld(bool state) => blockHeld = state;
+    public void SetBlockHeld(bool state)
+    {
+        if (TutorialManager.isTutorialActive) { blockHeld = false; return; }
+        blockHeld = state;
+    }
 
     public void OnCrouchToggle()
     {
+        if (TutorialManager.isTutorialActive) return;
         crouchPressed = !crouchPressed;
         if (!crouchPressed && playerCombat != null)
         {

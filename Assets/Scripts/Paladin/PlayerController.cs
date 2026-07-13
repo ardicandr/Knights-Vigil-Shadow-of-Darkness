@@ -102,6 +102,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (PauseMenuController.isPaused) return;
+        if (TutorialManager.isTutorialActive) return;
         if (healthScript != null && healthScript.isDead) return;
         if (anim.GetBool("isDead")) return;
 

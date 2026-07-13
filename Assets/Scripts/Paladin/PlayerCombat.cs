@@ -32,6 +32,7 @@ public class PlayerCombat : MonoBehaviour {
 
     void Update() {
         if (PauseMenuController.isPaused) return;
+        if (TutorialManager.isTutorialActive) return;
         
         if (anim.GetBool("isDead")) {
             if (weapon != null) weapon.isAttacking = false;

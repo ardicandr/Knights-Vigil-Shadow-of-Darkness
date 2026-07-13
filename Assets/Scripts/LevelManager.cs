@@ -3,6 +3,8 @@ using UnityEngine;
 public class LevelManager : MonoBehaviour
 {
     public GameObject portalObject; 
+    [Tooltip("Hapus centang ini jika di scene ini tidak ada puzzle (contoh: Castle Village)")]
+    public bool requiresPuzzle = true;
     private int totalEnemies;
     private bool enemiesCleared = false;
     private bool puzzleCleared = false;
@@ -17,6 +19,7 @@ public class LevelManager : MonoBehaviour
 
         Debug.Log("Total musuh di level ini: " + totalEnemies);
 
+        if (!requiresPuzzle) puzzleCleared = true;
         if (totalEnemies <= 0) enemiesCleared = true;
 
         if (portalObject != null)

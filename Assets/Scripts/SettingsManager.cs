@@ -106,12 +106,13 @@ public class SettingsManager : MonoBehaviour
         SetInvertY(savedInvert == 1);
 
         // 5. Load Graphics Quality
-        int savedGraphics = PlayerPrefs.GetInt("GraphicsQuality", defaultGraphicsQuality);
+        int savedUIIndex = PlayerPrefs.GetInt("GraphicsQuality", 0);
         if (graphicsDropdown != null)
         {
-            graphicsDropdown.value = savedGraphics;
+            graphicsDropdown.value = savedUIIndex;
         }
-        SetGraphicsQuality(savedGraphics);
+        
+        SetGraphicsQuality(savedUIIndex);
     }
 
     public void SetSensitivity(float value)
@@ -162,10 +163,15 @@ public class SettingsManager : MonoBehaviour
         }
     }
 
-    public void SetGraphicsQuality(int qualityIndex)
+    public void SetGraphicsQuality(int uiIndex)
     {
-        PlayerPrefs.SetInt("GraphicsQuality", qualityIndex);
-        QualitySettings.SetQualityLevel(qualityIndex);
+        PlayerPrefs.SetInt("GraphicsQuality", uiIndex);
+
+        int unityQualityLevel = uiIndex + 1; 
+
+        QualitySettings.SetQualityLevel(unityQualityLevel);
+        
+        Debug.Log("UI Index: " + uiIndex + " dipetakan ke Unity Quality: " + unityQualityLevel);
     }
     
     [Header("Panel Reference (Untuk Close)")]
